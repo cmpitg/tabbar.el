@@ -284,7 +284,7 @@ The function is called with no arguments.")
   (defalias 'tabbar-display-update
     (if (fboundp 'force-window-update)
         #'(lambda () (force-window-update (selected-window)))
-      'force-mode-line-update)))
+        'force-mode-line-update)))
 
 (defsubst tabbar-click-p (event)
   "Return non-nil if EVENT is a mouse click event."
@@ -392,10 +392,10 @@ You should use this hook to reset dependent data.")
 The result is a list just as long as the number of existing tab sets."
          (let (,result)
            (if tabbar-tabsets
-	       (mapatoms
-		#'(lambda (,tabset)
-		    (push (funcall ,function ,tabset) ,result))
-		tabbar-tabsets))
+               (mapatoms
+                #'(lambda (,tabset)
+                    (push (funcall ,function ,tabset) ,result))
+                tabbar-tabsets))
            ,result)))))
 
 (defun tabbar-make-tabset (name &rest objects)
@@ -497,11 +497,11 @@ added at the end."
   (let ((tabs (tabbar-tabs tabset)))
     (if (tabbar-get-tab object tabset)
         tabs
-      (let ((tab (tabbar-make-tab object tabset)))
-        (tabbar-set-template tabset nil)
-        (set tabset (if append
-                        (append tabs (list tab))
-                      (cons tab tabs)))))))
+        (let ((tab (tabbar-make-tab object tabset)))
+          (tabbar-set-template tabset nil)
+          (set tabset (if append
+                          (append tabs (list tab))
+                          (cons tab tabs)))))))
 
 (defun tabbar-delete-tab (tab)
   "Remove TAB from its tab set."
@@ -552,6 +552,7 @@ current cached copy."
   (tabbar-scroll tabbar-tabsets-tabset 0)
   (tabbar-set-template tabbar-tabsets-tabset nil)
   tabbar-tabsets-tabset)
+
 
 ;;; Faces
 ;;
@@ -850,12 +851,12 @@ That is for buttons and separators."
 SPECS is a list of image specifications.  See also `find-image'."
   (if (eq tabbar-cached-spec specs)
       tabbar-cached-image
-    (when (and tabbar-use-images (display-images-p))
-      (condition-case nil
-	  (prog1
-	      (setq tabbar-cached-image (find-image specs))
-	    (setq tabbar-cached-spec specs))
-	(error nil)))))
+      (when (and tabbar-use-images (display-images-p))
+        (condition-case nil
+            (prog1
+                (setq tabbar-cached-image (find-image specs))
+              (setq tabbar-cached-spec specs))
+          (error nil)))))
 
 (defsubst tabbar-disable-image (image)
   "From IMAGE, return a new image which looks disabled."
@@ -900,9 +901,9 @@ symbols `mouse-1', `mouse-2' or `mouse-3'.
 The default is `mouse-1'."
   (if (tabbar-click-p type)
       type
-    (list (or (memq type '(mouse-2 mouse-3)) 'mouse-1)
-          (or (event-start nil) ;; Emacs 21.4
-              (list (selected-window) (point) '(0 . 0) 0)))))
+      (list (or (memq type '(mouse-2 mouse-3)) 'mouse-1)
+            (or (event-start nil) ;; Emacs 21.4
+                (list (selected-window) (point) '(0 . 0) 0)))))
 
 ;;; Buttons
 ;;
@@ -949,12 +950,12 @@ Pass mouse click events on a button to `tabbar-click-on-button'."
   "Return a keymap to handle mouse click events on button NAME."
   (if (fboundp 'posn-string)
       tabbar-default-button-keymap
-    (let ((event (make-symbol "event")))
-      (tabbar-make-mouse-keymap
-       `(lambda (,event)
-          (interactive "@e")
-          (and (tabbar-click-p ,event)
-               (tabbar-click-on-button ',name ,event)))))))
+      (let ((event (make-symbol "event")))
+        (tabbar-make-mouse-keymap
+         `(lambda (,event)
+            (interactive "@e")
+            (and (tabbar-click-p ,event)
+                 (tabbar-click-on-button ',name ,event)))))))
 
 ;;; Button callbacks
 ;;
@@ -1017,12 +1018,12 @@ Pass mouse click events on a tab to `tabbar-click-on-tab'."
   "Return a keymap to handle mouse click events on TAB."
   (if (fboundp 'posn-string)
       tabbar-default-tab-keymap
-    (let ((event (make-symbol "event")))
-      (tabbar-make-mouse-keymap
-       `(lambda (,event)
-          (interactive "@e")
-          (and (tabbar-click-p ,event)
-               (tabbar-click-on-tab ',tab ,event)))))))
+      (let ((event (make-symbol "event")))
+        (tabbar-make-mouse-keymap
+         `(lambda (,event)
+            (interactive "@e")
+            (and (tabbar-click-p ,event)
+                 (tabbar-click-on-tab ',tab ,event)))))))
 
 ;;; Tab bar construction
 ;;
@@ -1040,9 +1041,9 @@ by the variable `tabbar-NAME-button'."
       (tabbar-normalize-image on 1)
       (if off
           (tabbar-normalize-image off 1)
-        ;; If there is no disabled button image, derive one from the
-        ;; button enabled image.
-        (setq off (tabbar-disable-image on))))
+          ;; If there is no disabled button image, derive one from the
+          ;; button enabled image.
+          (setq off (tabbar-disable-image on))))
     (cons
      (propertize (or (caar btn) " ") 'display on)
      (propertize (or (cadr btn) " ") 'display off))))
@@ -1053,7 +1054,7 @@ That is, a propertized string used as an `header-line-format' template
 element."
   (let ((label (if tabbar-button-label-function
                    (funcall tabbar-button-label-function name)
-                 (cons name name))))
+                   (cons name name))))
     ;; Cache the display value of the enabled/disabled buttons in
     ;; variables `tabbar-NAME-button-value'.
     (set (intern (format "tabbar-%s-button-value"  name))
@@ -1100,14 +1101,14 @@ TABSET is the tab set used to choose the appropriate buttons."
   (list
    (if tabbar-home-function
        (car tabbar-home-button-value)
-     (cdr tabbar-home-button-value))
+       (cdr tabbar-home-button-value))
    (if (> (tabbar-start tabset) 0)
        (car tabbar-scroll-left-button-value)
-     (cdr tabbar-scroll-left-button-value))
+       (cdr tabbar-scroll-left-button-value))
    (if (< (tabbar-start tabset)
           (1- (length (tabbar-tabs tabset))))
        (car tabbar-scroll-right-button-value)
-     (cdr tabbar-scroll-right-button-value))
+       (cdr tabbar-scroll-right-button-value))
    tabbar-separator-value))
 
 (defsubst tabbar-line-tab (tab)
@@ -1118,14 +1119,14 @@ Call `tabbar-tab-label-function' to obtain a label for TAB."
   (concat (propertize
            (if tabbar-tab-label-function
                (funcall tabbar-tab-label-function tab)
-             tab)
+               tab)
            'tabbar-tab tab
            'local-map (tabbar-make-tab-keymap tab)
            'help-echo 'tabbar-help-on-tab
            'mouse-face 'tabbar-highlight
            'face (if (tabbar-selected-p tab (tabbar-current-tabset))
                      'tabbar-selected
-                   'tabbar-unselected)
+                     'tabbar-unselected)
            'pointer 'hand)
           tabbar-separator-value))
 
@@ -1216,7 +1217,7 @@ That is dedicated windows, and `checkdoc' status windows."
               (list " *Checkdoc Status*"
                     (if (boundp 'ispell-choices-buffer)
                         ispell-choices-buffer
-                      "*Choices*")))))
+                        "*Choices*")))))
 
 ;;; Cyclic navigation through tabs
 ;;
@@ -1235,7 +1236,7 @@ Optional argument TYPE is a mouse event type (see the function
          (cycle (if (and (eq tabbar-cycle-scope 'groups)
                          (not (cdr (tabbar-tabs ttabset))))
                     'tabs
-                  tabbar-cycle-scope))
+                    tabbar-cycle-scope))
          selected tab)
     (when tabset
       (setq selected (tabbar-selected-tab tabset))
@@ -1364,12 +1365,12 @@ mouse-2, or mouse-3 click.  The default is a mouse-1 click."
 (defconst tabbar--mwheel-up-event
   (symbol-value (if (boundp 'mouse-wheel-up-event)
                     'mouse-wheel-up-event
-                  'mouse-wheel-up-button)))
+                    'mouse-wheel-up-button)))
 
 (defconst tabbar--mwheel-down-event
   (symbol-value (if (boundp 'mouse-wheel-down-event)
                     'mouse-wheel-down-event
-                  'mouse-wheel-down-button)))
+                    'mouse-wheel-down-button)))
 
 (defsubst tabbar--mwheel-key (event-type)
   "Return a mouse wheel key symbol from EVENT-TYPE.
@@ -1377,15 +1378,15 @@ When EVENT-TYPE is a symbol return it.
 When it is a button number, return symbol `mouse-<EVENT-TYPE>'."
   (if (symbolp event-type)
       event-type
-    (intern (format "mouse-%s" event-type))))
+      (intern (format "mouse-%s" event-type))))
 
 (defsubst tabbar--mwheel-up-p (event)
   "Return non-nil if EVENT is a mouse-wheel up event."
   (let ((x (event-basic-type event)))
     (if (eq 'mouse-wheel x)
         (< (car (cdr (cdr event))) 0)   ;; Emacs 21.3
-      ;; Emacs > 21.3
-      (eq x tabbar--mwheel-up-event))))
+        ;; Emacs > 21.3
+        (eq x tabbar--mwheel-up-event))))
 
 ;;; Basic commands
 ;;
@@ -1451,7 +1452,7 @@ Mouse-enabled equivalent of the command `tabbar-forward-tab'."
   (interactive "@e")
   (if (tabbar--mwheel-up-p event)
       (tabbar-mwheel-forward-tab event)
-    (tabbar-mwheel-backward-tab event)))
+      (tabbar-mwheel-backward-tab event)))
 
 ;;;###autoload
 (defun tabbar-mwheel-switch-group (event)
@@ -1459,7 +1460,7 @@ Mouse-enabled equivalent of the command `tabbar-forward-tab'."
   (interactive "@e")
   (if (tabbar--mwheel-up-p event)
       (tabbar-mwheel-forward-group event)
-    (tabbar-mwheel-backward-group event)))
+      (tabbar-mwheel-backward-group event)))
 
 ;;; Minor modes
 ;;
@@ -1498,16 +1499,16 @@ hidden, it is shown again.  Signal an error if Tabbar mode is off."
             (set (make-local-variable 'tabbar--local-hlf)
                  header-line-format)
             (kill-local-variable 'header-line-format))
-        ;; Otherwise hide the tab bar in this buffer.
-        (setq header-line-format nil))
+          ;; Otherwise hide the tab bar in this buffer.
+          (setq header-line-format nil))
 ;;; OFF
-    (if (local-variable-p 'tabbar--local-hlf)
-        ;; A local header line is hidden, show it again.
-        (progn
-          (setq header-line-format tabbar--local-hlf)
-          (kill-local-variable 'tabbar--local-hlf))
-      ;; The tab bar is locally hidden, show it again.
-      (kill-local-variable 'header-line-format))))
+      (if (local-variable-p 'tabbar--local-hlf)
+          ;; A local header line is hidden, show it again.
+          (progn
+            (setq header-line-format tabbar--local-hlf)
+            (kill-local-variable 'tabbar--local-hlf))
+          ;; The tab bar is locally hidden, show it again.
+          (kill-local-variable 'header-line-format))))
 
 ;;; Tabbar mode
 ;;
@@ -1553,21 +1554,21 @@ Returns non-nil if the new state is enabled.
         (setq tabbar--global-hlf (default-value 'header-line-format))
         (tabbar-init-tabsets-store)
         (setq-default header-line-format tabbar-header-line-format)
-	(if (fboundp 'tabbar-define-access-keys) (tabbar-define-access-keys)))
+        (if (fboundp 'tabbar-define-access-keys) (tabbar-define-access-keys)))
 ;;; OFF
-    (when (tabbar-mode-on-p)
-      ;; Turn off Tabbar-Local mode globally.
-      (mapc #'(lambda (b)
-                (condition-case nil
-                    (with-current-buffer b
-                      (and tabbar-local-mode
-                           (tabbar-local-mode -1)))
-                  (error nil)))
-            (buffer-list))
-      ;; Restore previous `header-line-format'.
-      (setq-default header-line-format tabbar--global-hlf)
-      (tabbar-free-tabsets-store))
-    ))
+      (when (tabbar-mode-on-p)
+        ;; Turn off Tabbar-Local mode globally.
+        (mapc #'(lambda (b)
+                  (condition-case nil
+                      (with-current-buffer b
+                        (and tabbar-local-mode
+                             (tabbar-local-mode -1)))
+                    (error nil)))
+              (buffer-list))
+        ;; Restore previous `header-line-format'.
+        (setq-default header-line-format tabbar--global-hlf)
+        (tabbar-free-tabsets-store))
+      ))
 
 ;;; Tabbar-Mwheel mode
 ;;
@@ -1577,22 +1578,22 @@ Returns non-nil if the new state is enabled.
         ;; Use one generic mouse wheel event
         (define-key km [A-mouse-wheel]
           'tabbar-mwheel-switch-group)
-      ;; Use separate up/down mouse wheel events
-      (let ((up   (tabbar--mwheel-key tabbar--mwheel-up-event))
-            (down (tabbar--mwheel-key tabbar--mwheel-down-event)))
-        (define-key km `[header-line ,down]
-          'tabbar-mwheel-backward-group)
-        (define-key km `[header-line ,up]
-          'tabbar-mwheel-forward-group)
-        (define-key km `[header-line (control ,down)]
-          'tabbar-mwheel-backward-tab)
-        (define-key km `[header-line (control ,up)]
-          'tabbar-mwheel-forward-tab)
-        (define-key km `[header-line (shift ,down)]
-          'tabbar-mwheel-backward)
-        (define-key km `[header-line (shift ,up)]
-          'tabbar-mwheel-forward)
-        ))
+        ;; Use separate up/down mouse wheel events
+        (let ((up   (tabbar--mwheel-key tabbar--mwheel-up-event))
+              (down (tabbar--mwheel-key tabbar--mwheel-down-event)))
+          (define-key km `[header-line ,down]
+            'tabbar-mwheel-backward-group)
+          (define-key km `[header-line ,up]
+            'tabbar-mwheel-forward-group)
+          (define-key km `[header-line (control ,down)]
+            'tabbar-mwheel-backward-tab)
+          (define-key km `[header-line (control ,up)]
+            'tabbar-mwheel-forward-tab)
+          (define-key km `[header-line (shift ,down)]
+            'tabbar-mwheel-backward)
+          (define-key km `[header-line (shift ,up)]
+            'tabbar-mwheel-forward)
+          ))
     km)
   "Keymap to use in Tabbar-Mwheel mode.")
 
@@ -1670,12 +1671,16 @@ visiting a file.  The current buffer is always included."
     (while (and (not derived) mode)
       (if (memq mode parents)
           (setq derived t)
-        (setq mode (get mode 'derived-mode-parent))))
+          (setq mode (get mode 'derived-mode-parent))))
     derived))
 
+;;; cmpitg
+;;; IMPORTANT
 (defun tabbar-buffer-groups ()
   "Return the list of group names the current buffer belongs to.
 Return a list of one element based on major mode."
+  ;; cmpitg's
+  (list "_All_")
   (list
    (cond
     ((or (get-buffer-process (current-buffer))
@@ -1685,10 +1690,27 @@ Return a list of one element based on major mode."
           major-mode '(comint-mode compilation-mode)))
      "Process"
      )
-    ((member (buffer-name)
-             '("*scratch*" "*Messages*"))
+    ((or (member (buffer-name)
+                 '("*scratch*" "*Messages*" "*Backtrace*" "*ESS*"
+                   "*magit-process*" "*Shell Command Output*" "*Bookmark List*"))
+         (string-match "\*magit.*" (buffer-name)))
      "Common"
      )
+    ((member (buffer-name)
+             '("*Completions*" "*buffer-selection*" "Compile-Log*"
+               "*Buffer List*" "*etags tmp*" "c++config.h" "cdefs.h"
+               "cc-defs.el.gz"
+               ))
+     "Hiding"
+     )
+    ((member (buffer-name)
+             '("*shell*" "*eshell*"))
+     "Shell"
+     )
+    ;; ((member (buffer-name)
+    ;;          '("Scratch.org"))
+    ;;  "Notes"
+    ;;  )
     ((eq major-mode 'dired-mode)
      "Dired"
      )
@@ -1705,33 +1727,42 @@ Return a list of one element based on major mode."
      "Mail"
      )
     (t
-     ;; Return `mode-name' if not blank, `major-mode' otherwise.
-     (if (and (stringp mode-name)
-              ;; Take care of preserving the match-data because this
-              ;; function is called when updating the header line.
-              (save-match-data (string-match "[^ ]" mode-name)))
-         mode-name
-       (symbol-name major-mode))
-     ))))
+     ;; ;; Return `mode-name' if not blank, `major-mode' otherwise.
+     ;; (if (and (stringp mode-name)
+     ;;          ;; Take care of preserving the match-data because this
+     ;;          ;; function is called when updating the header line.
+     ;;          (save-match-data (string-match "[^ ]" mode-name)))
+     ;;     mode-name
+     ;;     (symbol-name major-mode))
+     "_All_"
+     )))
+  )
 
 ;;; Group buffers in tab sets.
 ;;
 (defvar tabbar--buffers nil)
 
+;;; cmpitg
+;;; vital!!!
 (defun tabbar-buffer-update-groups ()
   "Update tab sets from groups of existing buffers.
 Return the the first group where the current buffer is."
   (let ((bl (sort
              (mapcar
-	      ;; for each buffer, create list: buffer, buffer name, groups-list
-	      ;; sort on buffer name; store to bl (buffer list)
+              ;; for each buffer, create list: buffer, buffer name, groups-list
+              ;; sort on buffer name; store to bl (buffer list)
               #'(lambda (b)
                   (with-current-buffer b
                     (list (current-buffer)
                           (buffer-name)
+                          ;; cmpitg's
                           (if tabbar-buffer-groups-function
                               (funcall tabbar-buffer-groups-function)
-                            '("Common")))))
+                              '("_All_"))
+                          ;; (if tabbar-buffer-groups-function
+                          ;;     (funcall tabbar-buffer-groups-function)
+                          ;;     '("Common"))
+                          )))
               (and tabbar-buffer-list-function
                    (funcall tabbar-buffer-list-function)))
              #'(lambda (e1 e2)
@@ -1740,19 +1771,24 @@ Return the the first group where the current buffer is."
     (unless (equal bl tabbar--buffers)
       ;; Add new buffers, or update changed ones.
       (dolist (e bl) ;; loop through buffer list
-        (dolist (g (nth 2 e)) ;; for each member of groups-list for current buffer
+
+        (dolist (g (nth 2 e)) ;; IMPORTANT -- for each member of
+                              ;; groups-list for current buffer
+          ;; (message-box "group %s" g)
           (let ((tabset (tabbar-get-tabset g))) ;; get group from group name
-            (if tabset ;; if group exists
-		;; check if current buffer is same as any cached buffer
-		;; (search buffer list for matching buffer)
+            (if tabset                          ;; if group exists
+                ;; check if current buffer is same as any cached buffer
+                ;; (search buffer list for matching buffer)
                 (unless (equal e (assq (car e) tabbar--buffers)) ;; if not,...
                   ;; This is a new buffer, or a previously existing
                   ;; buffer that has been renamed, or moved to another
                   ;; group.  Update the tab set, and the display.
                   (tabbar-add-tab tabset (car e) t) ;; add to end of tabset
                   (tabbar-set-template tabset nil))
-	      ;;if tabset doesn't exist, make a new tabset with this buffer
-              (tabbar-make-tabset g (car e))))))
+                ;;if tabset doesn't exist, make a new tabset with this buffer
+                ;; (message-box "making %s" g)
+                (tabbar-make-tabset g (car e)))))
+        )
       ;; Remove tabs for buffers not found in cache or moved to other
       ;; groups, and remove empty tabsets.
       (mapc 'tabbar-delete-tabset ;; delete each tabset named in following list:
@@ -1771,6 +1807,8 @@ Return the the first group where the current buffer is."
       (setq tabbar--buffers bl)))
   ;; Return the first group the current buffer belongs to.
   (car (nth 2 (assq (current-buffer) tabbar--buffers))))
+
+(tabbar-buffer-update-groups)
 
 ;;; Tab bar callbacks
 ;;
@@ -1782,14 +1820,19 @@ Return the the first group where the current buffer is."
         ;; Redisplay the home button.
         tabbar-home-button-value nil))
 
+;;; cmpitg
 (defun tabbar-buffer-tabs ()
   "Return the buffers to display on the tab bar, in a tab set."
   (let ((tabset (tabbar-get-tabset (tabbar-buffer-update-groups))))
     (tabbar-select-tab-value (current-buffer) tabset)
     (when tabbar--buffer-show-groups
-      (setq tabset (tabbar-get-tabsets-tabset))
+      ;; cmpitg's
+      ;; (setq tabset (tabbar-get-tabsets-tabset))
+      (setq tabset "_All_")
       (tabbar-select-tab-value (current-buffer) tabset))
     tabset))
+
+(tabbar-buffer-tabs)
 
 (defun tabbar-buffer-button-label (name)
   "Return a label for button NAME.
@@ -1808,14 +1851,14 @@ or groups.  Call the function `tabbar-button-label' otherwise."
         ;; default to the enabled value of `tabbar-home-button'.
         (if on
             (tabbar-normalize-image on 1)
-          (setq on (get-text-property 0 'display (car lab))))
+            (setq on (get-text-property 0 'display (car lab))))
         (if off
             (tabbar-normalize-image off 1)
-          (setq off (get-text-property 0 'display (car lab))))
+            (setq off (get-text-property 0 'display (car lab))))
         (setcar lab
                 (if tabbar--buffer-show-groups
                     (propertize (or (caar btn) (car lab)) 'display on)
-                  (propertize (or (cadr btn) (car lab)) 'display off)))
+                    (propertize (or (cadr btn) (car lab)) 'display off)))
         ))
     lab))
 
@@ -1824,16 +1867,16 @@ or groups.  Call the function `tabbar-button-label' otherwise."
 That is, a string used to represent it on the tab bar."
   (let ((label  (if tabbar--buffer-show-groups
                     (format "[%s]" (tabbar-tab-tabset tab))
-                  (format "%s" (tabbar-tab-value tab)))))
+                    (format "%s" (tabbar-tab-value tab)))))
     ;; Unless the tab bar auto scrolls to keep the selected tab
     ;; visible, shorten the tab label to keep as many tabs as possible
     ;; in the visible area of the tab bar.
     (if tabbar-auto-scroll-flag
         label
-      (tabbar-shorten
-       label (max 1 (/ (window-width)
-                       (length (tabbar-view
-                                (tabbar-current-tabset)))))))))
+        (tabbar-shorten
+         label (max 1 (/ (window-width)
+                         (length (tabbar-view
+                                  (tabbar-current-tabset)))))))))
 
 (defun tabbar-buffer-help-on-tab (tab)
   "Return the help string shown when mouse is onto TAB."
@@ -1842,10 +1885,10 @@ That is, a string used to represent it on the tab bar."
              (tab (tabbar-selected-tab tabset)))
         (format "mouse-1: switch to buffer %S in group [%s]"
                 (buffer-name (tabbar-tab-value tab)) tabset))
-    (format "mouse-1: switch to buffer %S\n\
+      (format "mouse-1: switch to buffer %S\n\
 mouse-2: pop to buffer, mouse-3: delete other windows"
-            (buffer-name (tabbar-tab-value tab)))
-    ))
+              (buffer-name (tabbar-tab-value tab)))
+      ))
 
 (defun tabbar-buffer-select-tab (event tab)
   "On mouse EVENT, select TAB."
@@ -1879,7 +1922,7 @@ mouse-3, close the current buffer."
   (concat
    (if tabbar--buffer-show-groups
        "mouse-1: show buffers in selected group"
-     "mouse-1: show groups of buffers")
+       "mouse-1: show groups of buffers")
    ", mouse-3: close current buffer"))
 
 (defun tabbar-buffer-track-killed ()
@@ -1898,7 +1941,7 @@ first."
          (while (and bl (not found))
            (if (eq b (car bl))
                (setq found t)
-             (setq sibling (car bl)))
+               (setq sibling (car bl)))
            (setq bl (cdr bl)))
          (when (and (setq sibling (or (car bl) sibling))
                     (buffer-live-p sibling))
